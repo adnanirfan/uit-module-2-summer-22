@@ -1,30 +1,41 @@
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import AddTodo from "./AddTodo";
 import Home from "./Home";
 import Login from "./Login";
 import Signup from "./Signup";
 import AuthContext from "../Context";
-import ProtectedWrapper from "./ProtectedWrapper";
-// function AuthProvider({ children }: { children: React.ReactNode }) {
+import { fakeAuthProvider } from "../Auth";
+import ProtectedRoute from "./ProtectedRoute";
 
-// }
+/**
+ * Local State App(Root Component) & two functions
+ * Passed those state & functions to Context API
+ * Wrap all the components inside ContextAPI Provider
+ * Protected Route
+ * Login & Logout with storing user state in LocalStorage
+ */
 
 const App = () => {
-  let [user, setUser] = useState(null);
+  let [user, setUser] = useState(() => {
+    const userObj = JSON.parse(localStorage.getItem("user"));
+    console.log("userObj", userObj);
+    return userObj;
+  });
 
   let signin = (newUser, callback) => {
-    // return fakeAuthProvider.signin(() => {
-    //   setUser(newUser);
-    //   callback();
-    // });
+    console.log("CALLED FROM LOGIN page");
+    return fakeAuthProvider.signin(() => {
+      setUser(newUser);
+      callback();
+    });
   };
 
   let signout = (callback) => {
-    // return fakeAuthProvider.signout(() => {
-    //   setUser(null);
-    //   callback();
-    // });
+    return fakeAuthProvider.signout(() => {
+      setUser(null);
+      callback();
+    });
   };
 
   let value = { user, signin, signout };
@@ -36,9 +47,9 @@ const App = () => {
           <Route
             path="/"
             element={
-              <ProtectedWrapper name="osama">
+              <ProtectedRoute name="osama">
                 <Home />
-              </ProtectedWrapper>
+              </ProtectedRoute>
             }
           />
           <Route path="/login" element={<Login />} />
