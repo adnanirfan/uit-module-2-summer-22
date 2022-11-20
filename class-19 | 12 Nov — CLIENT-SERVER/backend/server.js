@@ -42,6 +42,7 @@ app.post("/api/signup", async (req, res) => {
     res.send("error", error);
   }
 });
+
 app.post("/api/signin", async (req, res) => {
   console.log(req.body);
   try {
