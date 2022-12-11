@@ -1,4 +1,5 @@
 import { useContext, useState } from "react";
+import axios from "axios";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import {
   Link,
@@ -14,8 +15,20 @@ function Login() {
   const auth = useContext(AuthContext);
   const navigate = useNavigate();
 
-  const signin = () => {
-    const _auth = getAuth();
+  const signin = async () => {
+    try {
+      const res = await axios.post("http://localhost:4000/api/signin", form);
+      console.log("LOGIN", res);
+      const user = res.data;
+      localStorage.setItem("user", JSON.stringify(user));
+      auth.signin(user);
+      navigate("/");
+    } catch (error) {
+      console.log("LOGIN ERROR", error);
+      setErrors(error.response.data);
+    }
+
+    /* const _auth = getAuth();
     signInWithEmailAndPassword(_auth, form.email, form.password)
       .then((userCredential) => {
         // Signed in
@@ -29,7 +42,7 @@ function Login() {
         const errorMessage = error.message;
         console.log(error);
         setErrors(errorMessage);
-      });
+      }); */
   };
   return (
     <>

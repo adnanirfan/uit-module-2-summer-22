@@ -1,10 +1,15 @@
 const express = require("express");
 const { main } = require("./models/index");
+const cors = require('cors')
 const Users = require("./models/Users");
+const bookRoutes = require('./routes/book');
 const app = express();
 main();
 
 app.use(express.json());
+app.use(cors())
+
+app.use('/api/books', bookRoutes);
 
 app.get("/", async (req, res) => {
   try {
@@ -44,6 +49,25 @@ app.post("/api/signup", async (req, res) => {
 });
 
 app.post("/api/signin", async (req, res) => {
+  console.log(req.body);
+  try {
+    const user = await Users.findOne({
+      email: req.body.email,
+      password: req.body.password,
+    });
+    console.log("USER:", user);
+    if (user) {
+      res.send(user);
+    } else {
+      res.status(401).send("Invalid Credentials");
+    }
+  } catch (error) {
+    console.log("ERROR ++++>>>>", error);
+    res.send("error", error);
+  }
+});
+
+app.post("/api/book", async (req, res) => {
   console.log(req.body);
   try {
     const user = await Users.findOne({

@@ -24,6 +24,9 @@ function Header(props) {
       <Link style={style} to="/">
         Home
       </Link>
+      <Link style={style} to="/books">
+        Books
+      </Link>
       <Link style={style} to="/add-todo">
         Add Todo
       </Link>

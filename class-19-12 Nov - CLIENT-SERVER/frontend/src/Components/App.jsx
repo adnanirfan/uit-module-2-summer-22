@@ -1,19 +1,9 @@
-import {
-  child,
-  onChildAdded,
-  onValue,
-  push,
-  ref,
-  set,
-} from "firebase/database";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { useEffect, useState } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { fakeAuthProvider } from "../Auth";
 import { AuthContext } from "../Context";
-import DataContext from "../Context";
-import { database } from "../firebaseConfig";
+import AddBook from "./AddBook";
 import AddTodo from "./AddTodo";
+import Books from "./Books";
 import Header from "./Header";
 import Home from "./Home";
 import Login from "./Login";
@@ -29,72 +19,27 @@ import Signup from "./Signup";
  */
 
 const App = () => {
-  const [v, setV] = useState("");
-  const [a, setA] = useState([]);
   const [loader, setLoader] = useState(true);
-  let [user, setUser] = useState(() => {
-    const userObj = JSON.parse(localStorage.getItem("user"));
-    // console.log("userObj", userObj);
-    return userObj;
-  });
+  let [user, setUser] = useState(null);
 
   useEffect(() => {
-    const auth = getAuth();
-    // console.log("auth.currentUser: ", auth.currentUser);
-    onAuthStateChanged(auth, (user) => {
-      console.log("ON MOUNT user:", user);
-      if (user) {
-        const uid = user.uid;
-        setUser(user);
-        setLoader(false);
-        // ...
-      } else {
-        // User is signed out
-        // ...
-        setLoader(false);
-      }
-    });
-  }, []);
-  useEffect(() => {
-    const rootRef = ref(database);
-
-    onChildAdded(
-      child(rootRef, "idrees-todos"),
-      (data) => {
-        setA([...a, data.val()]);
-        // addCommentElement(
-        //   postElement,
-        //   data.key,
-        //   data.val().text,
-        //   data.val().author
-        // );
-      },
-      (e) => {
-        console.log("ERRRRRR_", e);
-      }
-    );
-    // onValue(
-    //   child(rootRef, "idrees-todos"),
-    //   (snapshot) => {
-    //     console.log("SNAPSHOT", snapshot.val());
-    //     setA(snapshot.val());
-    //   },
-    //   (error) => {
-    //     console.log("ERROR,", error);
-    //   }
-    // );
-    // console.log(11111111);
-    return () => {
-      // console.log("22222222");
-    };
+    const _user = JSON.parse(localStorage.getItem("user"));
+    if (_user) {
+      setUser(_user);
+      setLoader(false);
+    } else {
+      setLoader(false);
+    }
   }, []);
 
   let signin = (newUser) => {
     setUser(newUser);
   };
 
-  let signout = () => {
+  let signout = (cb) => {
     setUser(null);
+    localStorage.clear();
+    cb();
   };
 
   const obj = { user, signin, signout };
@@ -119,8 +64,24 @@ const App = () => {
           <Route
             path="/"
             element={
-              <ProtectedRoute name="osama">
+              <ProtectedRoute>
                 <Home />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/books"
+            element={
+              <ProtectedRoute>
+                <Books />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/add_book"
+            element={
+              <ProtectedRoute>
+                <AddBook />
               </ProtectedRoute>
             }
           />

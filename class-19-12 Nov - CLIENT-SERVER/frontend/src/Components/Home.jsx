@@ -14,16 +14,7 @@ function Home(props) {
       <Link to="/contact">Contact Us</Link>
       <br />
       <a href="/contact">Contact Us</a>
-      <button
-        onClick={() =>
-          auth.signout(() => {
-            navigate("/login");
-            localStorage.clear();
-          })
-        }
-      >
-        LOGOUT
-      </button>
+      <button onClick={() => auth.signout(() => navigate('/login'))}>LOGOUT</button>
     </>
   );
 }

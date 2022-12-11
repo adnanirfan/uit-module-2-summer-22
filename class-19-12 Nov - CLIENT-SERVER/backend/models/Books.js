@@ -6,9 +6,9 @@ const BooksSchema = new mongoose.Schema({
   publisher: String,
   image: String,
   stock: Number,
-  availabeBooks: Number,
-  // price: Number,
+  availableBooks: Number,
   ratings: Number, // Total Average Rating
+  // price: Number,
 });
 
 const Books = mongoose.model("books", BooksSchema);

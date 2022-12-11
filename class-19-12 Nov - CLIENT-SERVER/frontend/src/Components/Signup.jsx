@@ -1,5 +1,6 @@
-import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
+// import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
 import { useContext } from "react";
+import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../Context";
@@ -10,8 +11,16 @@ function Signup(props) {
   const navigate = useNavigate();
   const auth = useContext(AuthContext);
 
-  const signup = () => {
-    const _auth = getAuth();
+  const signup = async () => {
+    try {
+      const res = await axios.post("http://localhost:4000/api/signup", form);
+      console.log("SIGNUP", res);
+    } catch (error) {
+      console.log("SIGNUP ERROR", error);
+      setErrors(error.response.data);
+    }
+
+    /* const _auth = getAuth();
     createUserWithEmailAndPassword(_auth, form.email, form.password)
       .then((userCredential) => {
         console.log(userCredential);
@@ -29,7 +38,7 @@ function Signup(props) {
         setErrors(errorMessage);
         console.log(error);
         // ..
-      });
+      }); */
   };
   return (
     <>
